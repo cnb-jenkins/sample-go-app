@@ -1,7 +1,10 @@
 node("master") {
   withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-    sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl'
-    sh './kubectl get pods -n kpack'
-    sh 'env'
+    cleanWs()
+    checkout scm
+    sh 'curl -L https://github.com/vmware-tanzu/kpack-cli/releases/download/v0.3.0/kp-linux-0.3.0 > kp && chmod +x kp'
+    sh './kp image save demo --git $(git config --get remote.origin.url) --git-revision $(git rev-parse HEAD) --cluster-builder my-cluster-builder -w --tag samj1912/sample-app'
+    def image = sh( script: "./kp image status demo | grep Image |  tr -s ' ' | cut -d ' ' -f 2", returnStdout: true).trim()
+    sh "echo ${image}"
   }
 }

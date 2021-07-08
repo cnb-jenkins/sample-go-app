@@ -1,3 +1,3 @@
 node("master") {
-  sh "docker ps"
+  sh "docker run hello-world Hello from Docker!"
 }

@@ -1,3 +1,3 @@
-node("docker") {
+node("!master") {
   sh "echo"
 }

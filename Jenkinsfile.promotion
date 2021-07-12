@@ -5,8 +5,7 @@ node("master") {
     def image = sh( script: "./kp image status demo | grep Image |  tr -s ' ' | cut -d ' ' -f 2", returnStdout: true).trim()
     sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl'
     sh './kubectl delete job -l job-name=hello-world'
-    sh "./kubectl create job --image ${image} hello-world"
-    sh './kubectl logs -l job-name=hello-world'
-    
+    sh "./kubectl create job --image ${image} hello-world && ./kubectl wait --for=condition=complete job/hello-world"
+    sh './kubectl logs -l job-name=hello-world' 
   }
 }

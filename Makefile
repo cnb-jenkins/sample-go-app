@@ -5,10 +5,11 @@ SHELL := /bin/bash
 .DELETE_ON_ERROR:
 .SUFFIXES:
 
-GIT_REPO ?= https://github.com/cnb-jenkins/sample-node-app
-TAG ?= samj1912/sample-node-app
+GIT_REPO ?= https://github.com/cnb-jenkins/sample-go-app
+TAG ?= samj1912/sample-go-app
 GIT_REVISION ?= $(shell git rev-parse HEAD)
-APP_NAME ?= sample-node-app
+APP_NAME ?= sample-go-app
+CLUSTER_BUILDER ?= tiny-cluster-builder
 
 .PHONY: unit-test
 unit-test:
@@ -25,7 +26,7 @@ kp:
 
 .PHONY: build
 build: kp
-	@./kp image save $(APP_NAME) --git $(GIT_REPO) --git-revision $(GIT_REVISION) --cluster-builder my-cluster-builder -w --tag $(TAG)
+	@./kp image save $(APP_NAME) --git $(GIT_REPO) --git-revision $(GIT_REVISION) --cluster-builder $(CLUSTER_BUILDER) -w --tag $(TAG)
 
 .PHONY: image-tag
 image-tag: kp

@@ -5,6 +5,9 @@ SHELL := /bin/bash
 .DELETE_ON_ERROR:
 .SUFFIXES:
 
+GIT_REPO ?= https://github.com/cnb-jenkins/sample-app
+TAG ?= samj1912/sample-app
+
 .PHONY: unit-test
 unit-test:
   @echo "Running unit tests..."

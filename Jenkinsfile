@@ -2,7 +2,8 @@ node("master") {
   withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
     cleanWs()
     checkout scm
-    sh 'GIT_REVISION=$(git rev-parse HEAD) make unit-test build'
-    sh "Successfully built $(make image-tag)"
+    sh 'make unit-test build'
+    sh 'echo "Successfully built $(make image-tag)"'
+    cleanWs()
   }
 }

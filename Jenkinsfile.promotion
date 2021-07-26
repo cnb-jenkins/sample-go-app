@@ -1,12 +1,8 @@
 node("master") {
   withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
     cleanWs()
-    sh 'curl -L https://github.com/vmware-tanzu/kpack-cli/releases/download/v0.3.0/kp-linux-0.3.0 > kp && chmod +x kp'
-    sh './kp image status demo'
-    def image = sh( script: "./kp image status demo | grep Image |  tr -s ' ' | cut -d ' ' -f 2", returnStdout: true).trim()
-    sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl'
-    sh './kubectl delete job -l job-name=hello-world'
-    sh "./kubectl create job --image ${image} hello-world && ./kubectl wait --for=condition=complete job/hello-world"
-    sh './kubectl logs -l job-name=hello-world' 
+    checkout scm
+    sh 'make image-status acceptance-test deploy' 
+    cleanWs()
   }
 }

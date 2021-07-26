@@ -5,9 +5,10 @@ SHELL := /bin/bash
 .DELETE_ON_ERROR:
 .SUFFIXES:
 
-GIT_REPO ?= https://github.com/cnb-jenkins/sample-app
-TAG ?= samj1912/sample-app
+GIT_REPO ?= https://github.com/cnb-jenkins/sample-node-app
+TAG ?= samj1912/sample-node-app
 GIT_REVISION ?= $(shell git rev-parse HEAD)
+APP_NAME ?= sample-node-app
 
 .PHONY: unit-test
 unit-test:
@@ -24,23 +25,23 @@ kp:
 
 .PHONY: build
 build: kp
-	@./kp image save demo --git $(GIT_REPO) --git-revision $(GIT_REVISION) --cluster-builder my-cluster-builder -w --tag $(TAG)
+	@./kp image save $(APP_NAME) --git $(GIT_REPO) --git-revision $(GIT_REVISION) --cluster-builder my-cluster-builder -w --tag $(TAG)
 
 .PHONY: image-tag
 image-tag: kp
-	@./kp image status demo | grep Image |  tr -s ' ' | cut -d ' ' -f 2
+	@./kp image status $(APP_NAME) | grep Image |  tr -s ' ' | cut -d ' ' -f 2
 	
 kubectl:
 	@curl -LO "https://dl.k8s.io/release/$$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl
 
 .PHONY: image-status
 image-status: kp
-	@./kp build logs demo
-	@./kp image status demo
+	@./kp build logs $(APP_NAME)
+	@./kp image status $(APP_NAME)
 
 .PHONY: deploy
 deploy: kubectl kp
-	@./kubectl delete job -l job-name=hello-world
-	@./kubectl delete pods -l job-name=hello-world
-	@./kubectl create job --image "$$(./kp image status demo | grep Image |  tr -s ' ' | cut -d ' ' -f 2)" hello-world && ./kubectl wait --for=condition=complete job/hello-world
-	@./kubectl logs -l job-name=hello-world
+	@./kubectl delete job -l job-name=$(APP_NAME)
+	@./kubectl delete pods -l job-name=$(APP_NAME)
+	@./kubectl create job --image "$$(./kp image status $(APP_NAME) | grep Image |  tr -s ' ' | cut -d ' ' -f 2)" $(APP_NAME) && ./kubectl wait --for=condition=complete job/$(APP_NAME)
+	@./kubectl logs -l job-name=$(APP_NAME)

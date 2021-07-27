@@ -33,7 +33,7 @@ image-tag: kp
 	@./kp image status $(APP_NAME) | grep Image |  tr -s ' ' | cut -d ' ' -f 2
 	
 kubectl:
-	@curl -LO "https://dl.k8s.io/release/$$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl
+	@curl -LO "https://dl.k8s.io/release/v1.21.3/bin/linux/amd64/kubectl" && chmod +x kubectl
 
 .PHONY: image-status
 image-status: kp
